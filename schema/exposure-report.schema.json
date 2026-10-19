@@ -1,0 +1,140 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/5hirish/open-exposure/schema/exposure-report.schema.json",
+  "title": "OpenExposure report",
+  "description": "Machine-readable exposure report. One file per product version at reports/<slug>/report.json.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "slug", "status", "product", "cooperation_tier", "summary", "claims", "data_flows", "evidence", "developer_response", "method", "changelog"],
+  "properties": {
+    "schema_version": { "const": "0.1" },
+    "slug": { "type": "string", "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$", "description": "Must match the folder name under reports/." },
+    "fictional": { "type": "boolean", "description": "True only for example and test reports. Fictional reports are never published." },
+    "status": { "enum": ["draft", "in-review", "right-of-reply", "published", "corrected", "outdated"] },
+    "product": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["name", "developer", "category", "platform", "version", "store_url", "tested_on"],
+      "properties": {
+        "name": { "type": "string", "minLength": 1 },
+        "developer": { "type": "string", "minLength": 1 },
+        "category": { "enum": ["ai-assistant", "ai-companion", "meeting-recorder", "writing-tool", "keyboard", "browser-extension", "mcp-server", "other"] },
+        "platform": { "enum": ["chrome-extension", "firefox-extension", "electron-desktop", "android", "web", "mcp"] },
+        "version": { "type": "string", "minLength": 1 },
+        "store_url": { "type": "string", "format": "uri" },
+        "sha256": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+        "tested_on": { "type": "string", "format": "date" }
+      }
+    },
+    "cooperation_tier": { "type": "integer", "minimum": 0, "maximum": 3 },
+    "summary": { "type": "string", "minLength": 20, "maxLength": 300, "description": "The 30-second sentence a non-technical reader understands. Facts, no characterizations." },
+    "claims": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "source", "text", "url", "retrieved_on"],
+        "properties": {
+          "id": { "type": "string", "pattern": "^C[0-9]+$" },
+          "source": { "enum": ["store-label", "privacy-policy", "store-listing", "developer-statement", "other"] },
+          "text": { "type": "string", "minLength": 1, "description": "Short quote or faithful summary of the claim." },
+          "url": { "type": "string", "format": "uri" },
+          "archive_path": { "type": "string", "description": "Path to the archived copy, relative to the report folder." },
+          "retrieved_on": { "type": "string", "format": "date" }
+        }
+      }
+    },
+    "data_flows": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "data", "description", "recipient", "trigger", "evidence_level", "evidence_refs", "matches_claims"],
+        "properties": {
+          "id": { "type": "string", "pattern": "^F[0-9]+$" },
+          "data": { "enum": ["typed-text", "page-content", "files", "audio", "screenshots", "identifiers", "usage", "location", "contacts", "other"] },
+          "description": { "type": "string", "minLength": 1 },
+          "recipient": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["domain", "is_ai_provider"],
+            "properties": {
+              "domain": { "type": "string", "minLength": 1 },
+              "owner": { "type": "string" },
+              "is_ai_provider": { "type": "boolean" }
+            }
+          },
+          "trigger": { "enum": ["always", "on-action", "after-consent", "unknown"] },
+          "evidence_level": { "enum": ["E0", "E1", "E2", "E3"] },
+          "evidence_refs": { "type": "array", "items": { "type": "string", "pattern": "^V[0-9]+$" } },
+          "matches_claims": { "enum": ["yes", "no", "undisclosed", "unclear"] },
+          "claim_refs": { "type": "array", "items": { "type": "string", "pattern": "^C[0-9]+$" } }
+        }
+      }
+    },
+    "evidence": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "type", "description"],
+        "properties": {
+          "id": { "type": "string", "pattern": "^V[0-9]+$" },
+          "type": { "enum": ["code-reference", "traffic-capture", "archived-document", "developer-statement"] },
+          "description": { "type": "string", "minLength": 1 },
+          "path": { "type": "string", "description": "File in the evidence pack, relative to the report folder." },
+          "runs": { "type": "integer", "minimum": 1, "description": "Number of separate runs that reproduced a traffic capture." },
+          "code": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["file", "line", "excerpt"],
+            "properties": {
+              "file": { "type": "string" },
+              "line": { "type": "integer", "minimum": 1 },
+              "excerpt": { "type": "string", "maxLength": 500 }
+            }
+          }
+        }
+      }
+    },
+    "developer_response": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["sent_on", "responded_on", "text"],
+      "properties": {
+        "sent_on": { "type": ["string", "null"], "format": "date" },
+        "responded_on": { "type": ["string", "null"], "format": "date" },
+        "text": { "type": ["string", "null"], "description": "Unedited developer response, up to 300 words." }
+      }
+    },
+    "method": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["tools", "ai_models", "reviewers"],
+      "properties": {
+        "tools": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["name", "version"],
+            "properties": { "name": { "type": "string" }, "version": { "type": "string" } }
+          }
+        },
+        "ai_models": { "type": "array", "items": { "type": "string" }, "description": "Every AI model used in any step. Empty list if none." },
+        "reviewers": { "type": "array", "items": { "type": "string" }, "description": "Initials of human reviewers." },
+        "conflicts": { "type": "array", "items": { "type": "string" }, "description": "Disclosed relationships, e.g. tooling or funding from the product's model provider." }
+      }
+    },
+    "changelog": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["date", "change"],
+        "properties": { "date": { "type": "string", "format": "date" }, "change": { "type": "string", "minLength": 1 } }
+      }
+    }
+  }
+}

@@ -1,0 +1,23 @@
+# Raw captures and unredacted evidence never go into git
+*.flow
+*.har
+*.pcap
+*.pcapng
+**/evidence/raw/
+
+# Downloaded products under test
+*.apk
+*.crx
+*.xpi
+*.dmg
+*.exe
+*.AppImage
+targets-downloads/
+
+# Secrets
+.env
+*.key
+
+# Python
+__pycache__/
+.venv/

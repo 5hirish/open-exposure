@@ -1,0 +1,88 @@
+{
+  "schema_version": "0.1",
+  "slug": "example-notes-ai",
+  "fictional": true,
+  "status": "draft",
+  "product": {
+    "name": "ExampleNotes AI (fictional)",
+    "developer": "Example Labs (fictional)",
+    "category": "browser-extension",
+    "platform": "chrome-extension",
+    "version": "1.4.2",
+    "store_url": "https://example.com/store/example-notes-ai",
+    "sha256": "0000000000000000000000000000000000000000000000000000000000000000",
+    "tested_on": "2026-10-19"
+  },
+  "cooperation_tier": 0,
+  "summary": "When you type in any website, this extension sends what you type to an AI provider, including in email and chat apps. Its store label says it collects no data.",
+  "claims": [
+    {
+      "id": "C1",
+      "source": "store-label",
+      "text": "This developer declares that your data is not being collected or used.",
+      "url": "https://example.com/store/example-notes-ai/privacy",
+      "archive_path": "evidence/claims/store-label.txt",
+      "retrieved_on": "2026-10-19"
+    }
+  ],
+  "data_flows": [
+    {
+      "id": "F1",
+      "data": "typed-text",
+      "description": "Text typed into any input field is sent after a 1-second pause, on every website.",
+      "recipient": { "domain": "api.example-ai.test", "owner": "Example AI (fictional)", "is_ai_provider": true },
+      "trigger": "always",
+      "evidence_level": "E2",
+      "evidence_refs": ["V1", "V2"],
+      "matches_claims": "no",
+      "claim_refs": ["C1"]
+    },
+    {
+      "id": "F2",
+      "data": "identifiers",
+      "description": "A random install ID is sent to the developer's server when the extension is installed.",
+      "recipient": { "domain": "telemetry.example-labs.test", "owner": "Example Labs (fictional)", "is_ai_provider": false },
+      "trigger": "always",
+      "evidence_level": "E1",
+      "evidence_refs": ["V3"],
+      "matches_claims": "undisclosed"
+    }
+  ],
+  "evidence": [
+    {
+      "id": "V1",
+      "type": "traffic-capture",
+      "description": "Redacted request carrying canary string OEX-CANARY-7F3A to the AI endpoint.",
+      "path": "evidence/captures/typed-text-request.redacted.txt",
+      "runs": 2
+    },
+    {
+      "id": "V2",
+      "type": "code-reference",
+      "description": "Content script listens to input events and posts field values.",
+      "code": {
+        "file": "content/listener.js",
+        "line": 42,
+        "excerpt": "document.addEventListener('input', debounce(e => send(e.target.value), 1000))"
+      }
+    },
+    {
+      "id": "V3",
+      "type": "code-reference",
+      "description": "Install handler posts a generated install ID.",
+      "code": {
+        "file": "background/install.js",
+        "line": 8,
+        "excerpt": "chrome.runtime.onInstalled.addListener(() => post('/install', { id: crypto.randomUUID() }))"
+      }
+    }
+  ],
+  "developer_response": { "sent_on": null, "responded_on": null, "text": null },
+  "method": {
+    "tools": [{ "name": "mitmproxy", "version": "11.0" }, { "name": "rea-agents", "version": "4.1.0" }],
+    "ai_models": ["claude-opus-5-5"],
+    "reviewers": ["SK"],
+    "conflicts": []
+  },
+  "changelog": [{ "date": "2026-10-19", "change": "Draft created as a fictional example of the report format" }]
+}

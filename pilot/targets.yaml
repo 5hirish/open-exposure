@@ -1,0 +1,33 @@
+# Pilot target list. Status: proposed (week 1 locks it).
+# demand = US monthly searches for "is <product> safe" (OpenSEO, Oct 2026); null = not measured yet.
+# platform = which build we test. iOS is out of scope (CHARTER.md section 1).
+# conflict = relationship to disclose in the report (CHARTER.md section 2, rule 6).
+
+high_demand:
+  - { slug: chatgpt-desktop, name: ChatGPT, platform: electron-desktop, category: ai-assistant, demand: 4400 }
+  - { slug: chatgpt-android, name: ChatGPT, platform: android, category: ai-assistant, demand: 4400 }
+  - { slug: claude-desktop, name: Claude, platform: electron-desktop, category: ai-assistant, demand: 480, conflict: "Tested with Claude-based tooling" }
+  - { slug: gemini-android, name: Gemini, platform: android, category: ai-assistant, demand: 260 }
+  - { slug: copilot-desktop, name: Microsoft Copilot, platform: electron-desktop, category: ai-assistant, demand: 260 }
+  - { slug: perplexity-desktop, name: Perplexity, platform: electron-desktop, category: ai-assistant, demand: 210 }
+  - { slug: deepseek-android, name: DeepSeek, platform: android, category: ai-assistant, demand: 590 }
+  - { slug: character-ai-android, name: Character AI, platform: android, category: ai-companion, demand: 880 }
+  - { slug: character-ai-web, name: Character AI, platform: web, category: ai-companion, demand: 880 }
+  - { slug: replika-android, name: Replika, platform: android, category: ai-companion, demand: 210 }
+  - { slug: otter-desktop, name: Otter, platform: electron-desktop, category: meeting-recorder, demand: 320 }
+  - { slug: otter-android, name: Otter, platform: android, category: meeting-recorder, demand: 320 }
+  - { slug: fireflies-extension, name: Fireflies, platform: chrome-extension, category: meeting-recorder, demand: 90 }
+  - { slug: granola-desktop, name: Granola, platform: electron-desktop, category: meeting-recorder, demand: 20 }
+  - { slug: grammarly-extension, name: Grammarly, platform: chrome-extension, category: writing-tool, demand: 390 }
+  - { slug: grammarly-keyboard, name: Grammarly Keyboard, platform: android, category: keyboard, demand: 10 }
+  - { slug: gboard-android, name: Gboard, platform: android, category: keyboard, demand: 260 }
+  - { slug: swiftkey-android, name: Microsoft SwiftKey, platform: android, category: keyboard, demand: 50 }
+  # 7 more to pick in week 1 from the next tier of search demand (run OpenSEO on candidates first).
+
+browser_extensions:
+  - { slug: monica-extension, name: Monica, platform: chrome-extension, category: browser-extension, demand: 10 }
+  - { slug: merlin-extension, name: Merlin, platform: chrome-extension, category: browser-extension, demand: 10 }
+  - { slug: sider-extension, name: Sider, platform: chrome-extension, category: browser-extension, demand: 20 }
+  - { slug: maxai-extension, name: MaxAI, platform: chrome-extension, category: browser-extension, demand: 20 }
+  # 11 more to pick in week 1: top AI extensions by Chrome Web Store user count that request
+  # "read and change all your data on all websites". Record user count and permissions here.
